@@ -11,7 +11,7 @@ from torchvision.utils import make_grid, save_image
 from tqdm import tqdm
 
 import config
-from discriminator import Discriminator
+from critic import Critic
 from generator import Generator
 from utils import (check_dir, gradient_penalty, init_weights, load_checkpoint,
                    save_checkpoint)
@@ -24,7 +24,7 @@ def train(args: argparse.Namespace):
     # init models
     gen = Generator(config.Z_DIM, config.CHANNELS,
                     features=64).to(config.DEVICE)
-    critic = Discriminator(config.CHANNELS, features=64).to(config.DEVICE)
+    critic = Critic(config.CHANNELS, features=64).to(config.DEVICE)
     # init optimizers
     gen_optim = optim.Adam(gen.parameters(), lr=args.glr, betas=(.0, .9))
     critic_optim = optim.Adam(critic.parameters(), lr=args.clr, betas=(.0, .9))
