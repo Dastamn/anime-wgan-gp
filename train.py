@@ -36,7 +36,7 @@ def train(args: argparse.Namespace):
         load_checkpoint(critic, critic_optim, args.clr,
                         config.CHECKPOINT_CRITIC)
         start_epoch = prev_epoch
-        if isinstance(start_batch, int):
+        if isinstance(prev_batch, int):
             start_batch = prev_batch + 1
         if start_batch >= len(loader):
             start_batch = 0
