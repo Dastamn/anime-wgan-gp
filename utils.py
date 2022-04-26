@@ -1,8 +1,11 @@
 import os
+import re
+from glob import glob
 from typing import Tuple
 
 import torch
 import torch.nn as nn
+from PIL import Image
 from torch.optim.optimizer import Optimizer
 
 import config
@@ -62,6 +65,25 @@ def save_checkpoint(model: nn.Module, optimizer: Optimizer, filename: str, epoch
     print('Done.')
 
 
-def check_dir(dir):
+def check_dir(dir: str):
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+
+def make_gif(src_dir: str, filename: str = None):
+    assert os.path.isdir(src_dir), 'Directory not found.'
+    files = sorted(glob(f'{src_dir}/*.jpg'), key=_get_batch)
+    assert len(files) > 1, 'Must provide more than 1 file.'
+    frames = [Image.open(img) for img in files]
+    _, dir = os.path.split(src_dir)
+    if not filename:
+        filename = f'{dir}.gif'
+    elif not filename.endswith('.gif'):
+        filename += '.gif'
+    frames[0].save(filename, format='gif',
+                   append_images=frames[1:], save_all=True, loop=0)
+
+
+def _get_batch(x: str):
+    n = re.findall(r'\d+', x)[:2]
+    return int(n[0]), int(n[1])
